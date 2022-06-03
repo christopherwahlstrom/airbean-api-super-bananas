@@ -1,0 +1,24 @@
+{
+  "name": "airbean-api-super-bananas",
+  "version": "1.0.0",
+  "description": "Grupparbete Node.js , Express , NeDB",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/christopherwahlstrom/airbean-api-super-bananas.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/christopherwahlstrom/airbean-api-super-bananas/issues"
+  },
+  "homepage": "https://github.com/christopherwahlstrom/airbean-api-super-bananas#readme",
+  "dependencies": {
+    "express": "^4.18.1",
+    "nedb-promises": "^6.0.3"
+  }
+}
