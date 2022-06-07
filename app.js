@@ -19,16 +19,22 @@
 
 
 
-const express = require('express');
-const app = express();
-const PORT = 8000;
+ const express = require('express');
+ const app = express();
+ const PORT = 8000;
 
-
-
-
-
-
-app.listen(PORT, () => {
-    console.log(`Listening on port ${PORT}`);
-});
-
+ app.use(express.json());
+ 
+ const orderRouter = require('./routes/order');
+ const accountsRouter = require('./routes/accounts');
+ const menuRouter = require('./routes/menu');
+ 
+ app.use('/api/menu', menuRouter);
+ app.use('/api/account', accountsRouter);
+ app.use('/api/order', orderRouter);
+ 
+ 
+ 
+ app.listen(PORT, () => {
+     console.log(`Listening on port ${PORT}`);
+ });
