@@ -6,6 +6,9 @@ async function createOrder(order) {
     return result;
 }
 
+async function getOrder(order) {
+    const result = await database.find({username: order});
+    return result;
+}
 
-
-module.exports = { createOrder };
+module.exports = { createOrder, getOrder };
