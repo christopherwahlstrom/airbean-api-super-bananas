@@ -4,10 +4,32 @@ const router = Router();
 const { checkIfAccountsExists } = require('../model/accounts');
 const { createOrder, getOrder } = require('../model/orders');
 
+function compareTime(timeOfFetch, result) {
+    let fetchMinutes = Number(timeOfFetch.slice(0, 2)) * 60 + Number(timeOfFetch.slice(3, 5));
+    let fetchSeconds = Number(timeOfFetch.slice(6, 8)) + (fetchMinutes * 60);
 
+    for (let i = 0; result.length > i; i++) {
+        let minutes = Number(result[i].timeOfOrder.slice(0, 2)) * 60 + Number(result[i].timeOfOrder.slice(3, 5));
+        let seconds = Number(result[i].timeOfOrder.slice(6, 8)) + (minutes * 60);
+        let etaSeconds = result[i].ETATime * 60;
+
+        let orderTimeDiff = fetchSeconds - seconds;
+        console.log(orderTimeDiff, etaSeconds);
+        if (orderTimeDiff > 0 && orderTimeDiff < etaSeconds) {
+            result[i]["orderStatus"] = true;
+        } else {
+            result[i]["orderStatus"] = false;
+        }
+    }
+    return result;
+}
 function generateNumber() {
-    var randomNumber = Math.random().toString(36).slice(-8);
-    return randomNumber
+    let randomNumber = Math.random().toString(36).slice(-8);
+    return randomNumber;
+}
+function generateEtaTime() {
+    let randomNumber = Math.floor(Math.random() * (20 - 10 + 1) + 10);
+    return randomNumber;
 }
 
 function calculateTotal(order) {
@@ -27,11 +49,12 @@ router.post('/', async (req, res) => {
     } else {
         accountName = "guest"
     }
+    const ETATime = generateEtaTime();
     const orderNumber = generateNumber();
     const calTotal = calculateTotal(order);
     const timeOfOrder = new Date().toLocaleTimeString();
 
-    order["ETA-tid"] = 'Anländer om 10min';
+    order["ETATime"] = ETATime;
     order["timeOfOrder"] = timeOfOrder;
     order["username"] = accountName;
     order["ordernumber"] = orderNumber;
@@ -41,7 +64,9 @@ router.post('/', async (req, res) => {
 
     
     const resObj = {
-        success: true
+        success: true,
+        ETATIME: order,
+        orderNumber: orderNumber
     }
 
     res.json(resObj);
@@ -50,8 +75,19 @@ router.post('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     const order = req.params.id;
     const result = await getOrder(order);
+    const timeOfFetch = new Date().toLocaleTimeString();
+    let checkedtime = compareTime(timeOfFetch, result)
+    const finishedOrders = checkedtime.filter((order) => {
+        return order.orderStatus == false
+    });
+    const activeOrders = checkedtime.filter((order) => {
+        return order.orderStatus == true
+    });
+    const allOrders = [];
     let sum = 0;
     for (let i = 0; result.length > i; i++) {
+        let current = delete result[i].items;
+        allOrders.push(current)
         sum += result[i].total;
     }
     const resObj = {
@@ -60,9 +96,10 @@ router.get('/:id', async (req, res) => {
 
     if (result.length > 0) {
         resObj.success = true;
-        resObj.orders = result;
+        resObj.finishedOrders = finishedOrders;
+        resObj.activeOrders = activeOrders;
         resObj.totalSpend = sum;
-        resObj.timeNow = new Date().toLocaleTimeString();
+        resObj.timeNow = timeOfFetch;
     }
 
     res.json(resObj);
