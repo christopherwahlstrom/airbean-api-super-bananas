@@ -4,6 +4,7 @@ const router = Router();
 const { checkIfAccountsExists } = require('../model/accounts');
 const { createOrder, getOrder } = require('../model/orders');
 
+
 function compareTime(timeOfFetch, result) {
     let fetchMinutes = Number(timeOfFetch.slice(0, 2)) * 60 + Number(timeOfFetch.slice(3, 5));
     let fetchSeconds = Number(timeOfFetch.slice(6, 8)) + (fetchMinutes * 60);

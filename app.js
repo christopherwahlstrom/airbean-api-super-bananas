@@ -28,11 +28,12 @@
  const orderRouter = require('./routes/order');
  const accountsRouter = require('./routes/accounts');
  const menuRouter = require('./routes/menu');
+ const adminRouter = require('./routes/admin');
  
  app.use('/api/menu', menuRouter);
  app.use('/api/account', accountsRouter);
  app.use('/api/order', orderRouter);
- 
+ app.use('/api/admin', adminRouter);
  
  
  app.listen(PORT, () => {
